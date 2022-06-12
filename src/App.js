@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import BlogForm from "./BlogForm";
+import BlogsContainer from "./BlogsContainer";
 
-function App() {
+const App = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [blogFormOpen, setBlogFormOpen] = useState(false);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const fetchBlogs = () => {
+    fetch("http://localhost:3001/blogs")
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((data) => {
+        setBlogs(data);
+      });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Welcome to Blogger</h1>
+      <button
+        onClick={
+          blogFormOpen
+            ? () => setBlogFormOpen(false)
+            : () => setBlogFormOpen(true)
+        }
+      >
+        {blogFormOpen ? "Cancel" : "Add Blog"}
+      </button>
+      <br />
+      <br />
+      {blogFormOpen ? (
+        <BlogForm
+          blogs={blogs}
+          setBlogs={setBlogs}
+          setBlogFormOpen={setBlogFormOpen}
+        />
+      ) : null}
+      <BlogsContainer blogs={blogs} setBlogs={setBlogs} />
     </div>
   );
-}
+};
 
 export default App;
